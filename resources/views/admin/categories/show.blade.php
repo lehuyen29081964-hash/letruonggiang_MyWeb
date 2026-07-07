@@ -18,6 +18,15 @@
             <dt class="col-sm-3">Slug</dt>
             <dd class="col-sm-9">{{ $category->slug }}</dd>
 
+            <dt class="col-sm-3">Ảnh</dt>
+            <dd class="col-sm-9">
+                @if($category->image)
+                    <img src="{{ asset($category->image) }}" alt="{{ $category->catename }}" class="img-fluid img-thumbnail" style="max-width: 280px; height: auto;">
+                @else
+                    <span class="text-muted">Không có ảnh</span>
+                @endif
+            </dd>
+
             <dt class="col-sm-3">Trạng thái</dt>
             <dd class="col-sm-9">{{ $category->status == 1 ? 'Hiển thị' : 'Ẩn' }}</dd>
 

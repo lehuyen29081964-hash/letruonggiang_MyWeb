@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
@@ -40,19 +40,9 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories', 'brands'));
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $data = $request->validate([
-            'productname' => 'required|string|max:150|unique:products,productname',
-            'slug' => 'required|string|max:200|unique:products,slug',
-            'price' => 'required|numeric|min:0',
-            'pricesdiscount' => 'nullable|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|in:0,1',
-            'cateid' => 'required|exists:categories,cateid',
-            'brandid' => 'nullable|exists:brands,id',
-            'description' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -106,32 +96,16 @@ class ProductController extends Controller
         return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
         try {
-            if (empty($request->cateid)) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Vui lòng chọn loại sản phẩm');
-            }
-
             $product = Product::find($id);
 
             if (! $product) {
                 return Redirect::route('admin.products.index')->with('error', 'Sản phẩm không tồn tại.');
             }
 
-            $data = $request->validate([
-                'productname' => 'required|string|max:150|unique:products,productname,' . $id,
-                'slug' => 'required|string|max:200|unique:products,slug,' . $id,
-                'price' => 'required|numeric|min:0',
-                'pricesdiscount' => 'nullable|numeric|min:0',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'status' => 'required|in:0,1',
-                'cateid' => 'required|exists:categories,cateid',
-                'brandid' => 'nullable|exists:brands,id',
-                'description' => 'nullable|string',
-            ]);
+            $data = $request->validated();
 
             if ($request->hasFile('image')) {
                 if ($product->image && file_exists(public_path($product->image))) {
@@ -146,6 +120,8 @@ class ProductController extends Controller
                 }
                 $image->move($destination, $filename);
                 $data['image'] = 'images/products/' . $filename;
+            } else {
+                $data['image'] = $product->image;
             }
 
             $data['slug'] = Str::slug($data['slug']);

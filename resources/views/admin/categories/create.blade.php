@@ -6,36 +6,41 @@
 
 <h1 class="h3 mb-3">Thêm loại sản phẩm</h1>
 
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+<x-admin.alert />
 
 <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
+
     <div class="mb-3">
         <label class="form-label">Tên loại</label>
         <input type="text" name="catename" class="form-control" value="{{ old('catename') }}" required>
+        @error('catename')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
     </div>
     <div class="mb-3">
         <label class="form-label">Slug</label>
         <input type="text" name="slug" class="form-control" value="{{ old('slug') }}" required>
+        @error('slug')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
     </div>
     <div class="mb-3">
         <label class="form-label">Ảnh</label>
         <input type="file" name="image" class="form-control">
+        @error('image')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
     </div>
     <div class="mb-3">
-        <label class="form-label">Trạng thái</label>
-        <select name="status" class="form-control">
-            <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Hiển thị</option>
-            <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Ẩn</option>
-        </select>
+        <label class="form-label d-block">Trạng thái</label>
+        <input type="radio" class="btn-check" name="status" id="active" value="1" {{ old('status', 1) == 1 ? 'checked' : '' }}>
+        <label class="btn btn-outline-success me-1" for="active">Hiển thị</label>
+        <input type="radio" class="btn-check" name="status" id="inactive" value="0" {{ old('status', 1) == 0 ? 'checked' : '' }}>
+        <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
+        @error('status')
+            <span class="text-danger d-block mt-1">{{ $message }}</span>
+        @enderror
     </div>
     <div class="mb-3">
         <label class="form-label">Thứ tự</label>

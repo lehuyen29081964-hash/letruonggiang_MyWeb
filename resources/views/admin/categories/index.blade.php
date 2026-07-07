@@ -19,6 +19,7 @@
         <tr>
             <th style="width: 80px;">STT</th>
             <th style="width: 120px;">Mã loại</th>
+            <th style="width: 120px;">Ảnh</th>
             <th>Tên loại</th>
             <th>Slug</th>
             <th style="width: 140px;">Trạng thái</th>
@@ -30,6 +31,13 @@
             <tr>
                 <td>{{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}</td>
                 <td>{{ $item->cateid }}</td>
+                <td>
+                    @if($item->image)
+                        <img src="{{ asset($item->image) }}" alt="{{ $item->catename }}" class="img-thumbnail" style="width: 100px; height: auto; object-fit: cover;" />
+                    @else
+                        <span class="text-muted">Không có ảnh</span>
+                    @endif
+                </td>
                 <td>{{ $item->catename }}</td>
                 <td>{{ $item->slug }}</td>
                 <td>
@@ -57,7 +65,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" class="text-center">Không có danh mục nào.</td>
+                <td colspan="7" class="text-center">Không có danh mục nào.</td>
             </tr>
         @endforelse
         </tbody>

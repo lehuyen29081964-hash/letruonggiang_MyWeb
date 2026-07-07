@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
@@ -24,16 +24,9 @@ class CategoryController extends Controller
         return view('admin.categories.create');
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $data = $request->validate([
-            'catename' => 'required|string|max:100|unique:categories,catename',
-            'slug' => 'required|string|max:150|unique:categories,slug',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|in:0,1',
-            'sort_order' => 'nullable|integer',
-            'description' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -82,7 +75,7 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
         $category = Category::find($id);
 
@@ -90,14 +83,7 @@ class CategoryController extends Controller
             return Redirect::route('admin.categories.index')->with('error', 'Danh mục không tồn tại.');
         }
 
-        $data = $request->validate([
-            'catename' => 'required|string|max:100|unique:categories,catename,' . $id . ',cateid',
-            'slug' => 'required|string|max:150|unique:categories,slug,' . $id . ',cateid',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|in:0,1',
-            'sort_order' => 'nullable|integer',
-            'description' => 'nullable|string',
-        ]);
+        $data = $request->validated();
 
         $imagePath = $category->image;
         if ($request->hasFile('image')) {
