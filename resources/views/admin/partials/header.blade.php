@@ -10,6 +10,9 @@
                     <span class="nav-link">Xin chào <strong>{{ Auth::user()->fullname }}</strong></span>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.change-password') }}" class="nav-link">Đổi mật khẩu</a>
+                </li>
+                <li class="nav-item">
                     <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-link nav-link p-0 text-decoration-none">

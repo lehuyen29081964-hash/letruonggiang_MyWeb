@@ -26,9 +26,15 @@ Route::post('login', [AuthController::class, 'postLogin'])->name('postLogin');
 Route::get('forgotpassword', [AuthController::class, 'forgotPassword'])->name('forgotpassword');
 Route::post('forgotpassword', [AuthController::class, 'postForgotPassword'])->name('postForgotPassword');
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+use App\Http\Middleware\Authenticate as AuthMiddleware;
+
+Route::prefix('admin')->name('admin.')->middleware(AuthMiddleware::class)->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
+
+    // Change password
+    Route::get('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'show'])->name('change-password');
+    Route::post('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'update'])->name('change-password.post');
 
     Route::resource('categories', CategoryController::class);
     Route::resource('brands', BrandController::class);
