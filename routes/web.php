@@ -23,11 +23,11 @@ Route::get('/demo6/{parram1}/{parram2}', [DemoController::class, 'index6']);
 // Authentication routes
 Route::get('login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('login', [AuthController::class, 'postLogin'])->name('postLogin');
-Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 Route::get('forgotpassword', [AuthController::class, 'forgotPassword'])->name('forgotpassword');
 Route::post('forgotpassword', [AuthController::class, 'postForgotPassword'])->name('postForgotPassword');
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
 
     Route::resource('categories', CategoryController::class);
