@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\BrandController;
@@ -18,7 +19,14 @@ Route::get('/demo5/{id?}', [DemoController::class, 'index5']);
 
 Route::get('/demo6/{parram1}/{parram2}', [DemoController::class, 'index6']);
 
-Route::prefix('admin')->name('admin.')->group(function () {
+// Authentication routes
+Route::get('login', [AuthController::class, 'login'])->name('auth.login');
+Route::post('login', [AuthController::class, 'postLogin'])->name('postLogin');
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('forgotpassword', [AuthController::class, 'forgotPassword'])->name('forgotpassword');
+Route::post('forgotpassword', [AuthController::class, 'postForgotPassword'])->name('postForgotPassword');
+
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('home');
