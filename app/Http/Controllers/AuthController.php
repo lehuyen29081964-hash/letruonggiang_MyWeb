@@ -12,6 +12,10 @@ class AuthController extends Controller
     // Hiển thị trang đăng nhập
     public function login()
     {
+        // Kiểm tra nếu người dùng đã đăng nhập thì chuyển đến Dashboard
+        if (Auth::check()) {
+            return redirect()->route('admin.home');
+        }
         return view('admin.auth.login');
     }
 
@@ -27,9 +31,18 @@ class AuthController extends Controller
     }
 
     // Xử lý đăng xuất
-    public function logout()
+    public function logout(Request $request)
     {
+        // Đăng xuất user
         Auth::logout();
+        
+        // Xóa session hiện tại
+        $request->session()->invalidate();
+        
+        // Tạo lại CSRF token mới
+        $request->session()->regenerateToken();
+        
+        // Redirect về trang login
         return redirect()->route('auth.login');
     }
 
