@@ -28,15 +28,11 @@ class BrandController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $image->getClientOriginalName());
-            $destination = public_path('images/brands');
-            if (! file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $image->move($destination, $filename);
-            $data['image'] = 'images/brands/' . $filename;
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $fileName = Str::slug($request->brandname) . '.' . $file->extension();
+            $file->storeAs('brands', $fileName, 'public');
+            $data['image'] = $fileName;
         }
 
         $data['slug'] = Str::slug($data['slug']);
@@ -66,18 +62,14 @@ class BrandController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            if ($brand->image && file_exists(public_path($brand->image))) {
-                @unlink(public_path($brand->image));
+        if ($request->hasFile('img')) {
+            if ($brand->image && file_exists(storage_path('app/public/brands/' . $brand->image))) {
+                @unlink(storage_path('app/public/brands/' . $brand->image));
             }
-            $image = $request->file('image');
-            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $image->getClientOriginalName());
-            $destination = public_path('images/brands');
-            if (! file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $image->move($destination, $filename);
-            $data['image'] = 'images/brands/' . $filename;
+            $file = $request->file('img');
+            $fileName = Str::slug($request->brandname) . '.' . $file->extension();
+            $file->storeAs('brands', $fileName, 'public');
+            $data['image'] = $fileName;
         } else {
             $data['image'] = $brand->image;
         }

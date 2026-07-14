@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -29,15 +30,11 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         $imagePath = null;
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $image->getClientOriginalName());
-            $destination = public_path('images/categories');
-            if (! file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $image->move($destination, $filename);
-            $imagePath = 'images/categories/' . $filename;
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $fileName = Str::slug($request->catename) . '.' . $file->extension();
+            $file->storeAs('categories', $fileName, 'public');
+            $imagePath = $fileName;
         }
 
         Category::create([
@@ -86,19 +83,15 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         $imagePath = $category->image;
-        if ($request->hasFile('image')) {
-            if ($category->image && file_exists(public_path($category->image))) {
-                @unlink(public_path($category->image));
+        if ($request->hasFile('img')) {
+            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+                Storage::disk('public')->delete('categories/' . $category->image);
             }
 
-            $image = $request->file('image');
-            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $image->getClientOriginalName());
-            $destination = public_path('images/categories');
-            if (! file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $image->move($destination, $filename);
-            $imagePath = 'images/categories/' . $filename;
+            $file = $request->file('img');
+            $fileName = Str::slug($request->catename) . '.' . $file->extension();
+            $file->storeAs('categories', $fileName, 'public');
+            $imagePath = $fileName;
         }
 
         $category->update([
@@ -119,8 +112,8 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if ($category) {
-            if ($category->image && file_exists(public_path($category->image))) {
-                @unlink(public_path($category->image));
+            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+                Storage::disk('public')->delete('categories/' . $category->image);
             }
             $category->delete();
         }

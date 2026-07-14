@@ -98,9 +98,33 @@
                 <textarea name="description" rows="4" class="form-control">{{ old('description', $product->description) }}</textarea>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Ảnh sản phẩm</label>
-                <input type="file" name="image" class="form-control">
+            <div class="mb-3 img-group">
+                <label class="form-label">Ảnh đại diện</label>
+                <input type="file" name="img" class="form-control img-input">
+                @error('img')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                <div class="img-preview mt-2">
+                    @if($product->image)
+                        <img src="{{ asset('storage/products/' . $product->image) }}" class="img-thumbnail" style="width: 150px; height: auto;" alt="Ảnh đại diện">
+                    @endif
+                </div>
+            </div>
+
+            <div class="mb-3 img-group">
+                <label class="form-label">Ảnh phụ</label>
+                <input type="file" name="imgs[]" class="form-control img-input" multiple>
+                @error('imgs')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                @error('imgs.*')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                <div class="img-preview mt-2">
+                    @foreach($product->images as $image)
+                        <img src="{{ asset('storage/products/' . $image->image) }}" class="img-thumbnail me-2 mb-2" style="width: 120px; height: auto;" alt="Ảnh phụ">
+                    @endforeach
+                </div>
             </div>
 
             <div>

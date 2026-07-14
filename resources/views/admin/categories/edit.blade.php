@@ -35,17 +35,17 @@
             <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
-    <div class="mb-3">
-        <label class="form-label">Ảnh</label>
-        <input type="file" name="image" class="form-control">
-        @error('image')
+    <div class="mb-3 img-group">
+        <label class="form-label">Hình ảnh</label>
+        <input type="file" name="img" class="form-control img-input">
+        @error('img')
             <span class="text-danger">{{ $message }}</span>
         @enderror
-        @if($category->image)
-            <div class="mt-2">
-                <img src="{{ asset($category->image) }}" alt="Ảnh hiện tại" class="img-thumbnail" style="width: 120px; height: auto;">
-            </div>
-        @endif
+        <div class="img-preview mt-2">
+            @if($category->image)
+                <img src="{{ asset('storage/categories/' . $category->image) }}" alt="Ảnh hiện tại" class="img-thumbnail" style="width: 120px; height: auto;">
+            @endif
+        </div>
     </div>
     <div class="mb-3">
         <label class="form-label d-block">Trạng thái</label>

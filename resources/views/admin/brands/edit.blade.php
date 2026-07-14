@@ -28,17 +28,20 @@
         @enderror
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Ảnh</label>
-        <input type="file" name="image" class="form-control">
-        @error('image')
+    <div class="mb-3 img-group">
+        <label class="form-label">Hình ảnh</label>
+        <input type="file" name="img" class="form-control img-input">
+        @error('img')
             <span class="text-danger">{{ $message }}</span>
         @enderror
-        @if($brand->image)
-            <div class="mt-2">
-                <img src="{{ asset($brand->image) }}" alt="{{ $brand->brandname }}" class="img-thumbnail" style="width: 150px; height: auto;">
-            </div>
-        @endif
+        <div class="img-preview mt-2">
+                @php $src = $brand->image_url ?? null; @endphp
+                @if($src)
+                    <img src="{{ $src }}" alt="{{ $brand->brandname }}" class="img-thumbnail" style="width: 150px; height: auto;">
+                @else
+                    <img src="{{ asset('images/default.png') }}" alt="No image" class="img-thumbnail" style="width:150px; height:auto;">
+                @endif
+        </div>
     </div>
 
     <div class="mb-3">

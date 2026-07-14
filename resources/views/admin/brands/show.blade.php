@@ -20,8 +20,9 @@
 
             <dt class="col-sm-3">Ảnh</dt>
             <dd class="col-sm-9">
-                @if($brand->image)
-                    <img src="{{ asset($brand->image) }}" alt="{{ $brand->brandname }}" class="img-fluid img-thumbnail" style="max-width: 280px; height: auto;">
+                @php $src = $brand->image_url ?? null; @endphp
+                @if($src)
+                    <img src="{{ $src }}" alt="{{ $brand->brandname }}" class="img-fluid img-thumbnail" style="max-width: 280px; height: auto;">
                 @else
                     <span class="text-muted">Không có ảnh</span>
                 @endif

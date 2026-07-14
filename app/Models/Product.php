@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use App\Models\ProductImage;
 
 class Product extends Model
 {
@@ -32,5 +34,11 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class, 'brandid', 'id');
+    }
+
+    // Quan hệ với ảnh phụ
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 }

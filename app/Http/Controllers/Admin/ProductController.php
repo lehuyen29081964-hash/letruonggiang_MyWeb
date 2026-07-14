@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -44,15 +46,11 @@ class ProductController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\-_\.]/', '_', $image->getClientOriginalName());
-            $destination = public_path('images/products');
-            if (! file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-            $image->move($destination, $filename);
-            $data['image'] = 'images/products/' . $filename;
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $fileName = Str::slug($request->productname) . '.' . $file->extension();
+            $file->storeAs('products', $fileName, 'public');
+            $data['image'] = $fileName;
         }
 
         $data['slug'] = Str::slug($data['slug']);
@@ -60,7 +58,20 @@ class ProductController extends Controller
         $data['brandid'] = $data['brandid'] ?? null;
 
         try {
-            Product::create($data);
+            $product = Product::create($data);
+
+            if ($request->hasFile('imgs')) {
+                $index = 1;
+                foreach ($request->file('imgs') as $file) {
+                    $fileName = Str::slug($request->productname) . '-' . time() . '-' . $index . '.' . $file->extension();
+                    $file->storeAs('products', $fileName, 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $fileName,
+                    ]);
+                    $index++;
+                }
+            }
 
             return Redirect::route('admin.products.index')
                 ->with('success', 'Thêm sản phẩm thành công');
@@ -84,7 +95,7 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::find($id);
+        $product = Product::with('images')->find($id);
 
         if (! $product) {
             return Redirect::route('admin.products.index')->with('error', 'Sản phẩm không tồn tại.');
@@ -107,21 +118,30 @@ class ProductController extends Controller
 
             $data = $request->validated();
 
-            if ($request->hasFile('image')) {
-                if ($product->image && file_exists(public_path($product->image))) {
-                    @unlink(public_path($product->image));
+            if ($request->hasFile('img')) {
+                if ($product->image && Storage::disk('public')->exists('products/' . $product->image)) {
+                    Storage::disk('public')->delete('products/' . $product->image);
                 }
 
-                $image = $request->file('image');
-                $filename = time() . '_' . preg_replace('/[^A-Za-z0-9\\-_\\.]/', '_', $image->getClientOriginalName());
-                $destination = public_path('images/products');
-                if (! file_exists($destination)) {
-                    mkdir($destination, 0755, true);
-                }
-                $image->move($destination, $filename);
-                $data['image'] = 'images/products/' . $filename;
+                $file = $request->file('img');
+                $fileName = Str::slug($request->productname) . '.' . $file->extension();
+                $file->storeAs('products', $fileName, 'public');
+                $data['image'] = $fileName;
             } else {
                 $data['image'] = $product->image;
+            }
+
+            if ($request->hasFile('imgs')) {
+                $index = 1;
+                foreach ($request->file('imgs') as $file) {
+                    $fileName = Str::slug($request->productname) . '-' . time() . '-' . $index . '.' . $file->extension();
+                    $file->storeAs('products', $fileName, 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $fileName,
+                    ]);
+                    $index++;
+                }
             }
 
             $data['slug'] = Str::slug($data['slug']);

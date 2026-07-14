@@ -33,7 +33,7 @@
                 <td>{{ $item->cateid }}</td>
                 <td>
                     @if($item->image)
-                        <img src="{{ asset($item->image) }}" alt="{{ $item->catename }}" class="img-thumbnail" style="width: 100px; height: auto; object-fit: cover;" />
+                        <img src="{{ asset('storage/categories/' . $item->image) }}" alt="{{ $item->catename }}" class="img-thumbnail" style="width: 100px; height: auto; object-fit: cover;" />
                     @else
                         <span class="text-muted">Không có ảnh</span>
                     @endif

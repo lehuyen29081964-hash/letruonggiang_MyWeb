@@ -32,7 +32,7 @@ class BrandRequest extends FormRequest
                 Rule::unique('brands', 'slug')->ignore($brand),
                 'regex:/^[a-z0-9\-]+$/',
             ],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'img' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:200',
             'status' => 'required|in:0,1',
             'sort_order' => 'nullable|integer',
             'description' => 'nullable|string',
@@ -48,6 +48,9 @@ class BrandRequest extends FormRequest
             'unique' => ':attribute đã tồn tại.',
             'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
             'status.in' => ':attribute không hợp lệ.',
+            'img.image' => ':attribute phải là hình ảnh.',
+            'img.mimes' => ':attribute chỉ được chấp nhận định dạng: jpeg, jpg, png, webp.',
+            'img.max' => ':attribute không được vượt quá 200 KB.',
         ];
     }
 
@@ -56,7 +59,7 @@ class BrandRequest extends FormRequest
         return [
             'brandname' => 'Tên thương hiệu',
             'slug' => 'Đường dẫn (Slug)',
-            'image' => 'Ảnh',
+            'img' => 'Hình ảnh',
             'status' => 'Trạng thái',
             'sort_order' => 'Thứ tự',
             'description' => 'Mô tả',

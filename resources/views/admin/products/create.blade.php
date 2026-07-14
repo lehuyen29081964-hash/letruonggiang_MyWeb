@@ -97,9 +97,25 @@
                 <textarea name="description" rows="4" class="form-control">{{ old('description') }}</textarea>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Ảnh sản phẩm</label>
-                <input type="file" name="image" class="form-control">
+            <div class="mb-3 img-group">
+                <label class="form-label">Ảnh đại diện</label>
+                <input type="file" name="img" class="form-control img-input">
+                @error('img')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                <div class="img-preview mt-2"></div>
+            </div>
+
+            <div class="mb-3 img-group">
+                <label class="form-label">Ảnh phụ</label>
+                <input type="file" name="imgs[]" class="form-control img-input" multiple>
+                @error('imgs')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                @error('imgs.*')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+                <div class="img-preview mt-2"></div>
             </div>
 
             <div>

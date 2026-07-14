@@ -27,12 +27,13 @@
         @enderror
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Ảnh</label>
-        <input type="file" name="image" class="form-control">
-        @error('image')
+    <div class="mb-3 img-group">
+        <label class="form-label">Hình ảnh</label>
+        <input type="file" name="img" class="form-control img-input">
+        @error('img')
             <span class="text-danger">{{ $message }}</span>
         @enderror
+        <div class="img-preview mt-2"></div>
     </div>
 
     <div class="mb-3">

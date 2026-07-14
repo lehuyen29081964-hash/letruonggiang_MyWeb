@@ -28,12 +28,11 @@
                 <tbody>
                     @foreach($list as $brand)
                         <tr>
+                            <td>{{ $list->firstItem() + $loop->index }}</td>
                             <td>
-                                {{ ($list->currentPage() - 1) * $list->perPage() + $loop->iteration }}
-                            </td>
-                            <td>
-                                @if($brand->image_url)
-                                    <img src="{{ $brand->image_url }}" alt="{{ $brand->brandname }}" style="width:60px; height:auto; object-fit:contain;">
+                                @php $src = $brand->image_url ?? null; @endphp
+                                @if($src)
+                                    <img src="{{ $src }}" alt="{{ $brand->brandname }}" style="width:60px; height:auto; object-fit:contain;">
                                 @else
                                     <img src="{{ asset('images/default.png') }}" alt="No image" style="width:60px; height:auto; object-fit:contain;">
                                 @endif
