@@ -6,7 +6,7 @@
 
     <ul class="nav flex-column mt-3">
         <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.home') }}">
+            <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-house-door"></i>
                 Dashboard
             </a>

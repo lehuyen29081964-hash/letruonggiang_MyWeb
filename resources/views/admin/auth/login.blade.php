@@ -95,6 +95,12 @@
             </div>
 
             <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         @foreach ($errors->all() as $error)
@@ -103,7 +109,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('postLogin') }}" method="POST">
+                <form action="{{ route('admin.login.post') }}" method="POST">
                     @csrf
 
                     <div class="form-group">
@@ -132,7 +138,7 @@
                     <button type="submit" class="btn btn-login">Đăng nhập</button>
 
                     <div class="forgot-password">
-                        <a href="{{ route('forgotpassword') }}">Quên mật khẩu?</a>
+                        <a href="{{ route('admin.forgotpass') }}">Quên mật khẩu?</a>
                     </div>
                 </form>
             </div>

@@ -17,7 +17,7 @@ class AuthController extends Controller
     {
         // Kiểm tra nếu người dùng đã đăng nhập thì chuyển đến Dashboard
         if (Auth::check()) {
-            return redirect()->route('admin.home');
+            return redirect()->route('admin.dashboard');
         }
         return view('admin.auth.login');
     }
@@ -27,7 +27,7 @@ class AuthController extends Controller
     {
         // Thử đăng nhập
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password], $request->remember ?? false)) {
-            return redirect()->route('admin.home');
+            return redirect()->route('admin.dashboard');
         } else {
             return redirect()->back()->withErrors(['login' => 'Sai tên đăng nhập hoặc mật khẩu']);
         }
@@ -46,7 +46,7 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         
         // Redirect về trang login
-        return redirect()->route('auth.login');
+        return redirect()->route('admin.login');
     }
 
     // Hiển thị giao diện quên mật khẩu
@@ -60,23 +60,29 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email'
+        ], [
+            'email.required' => 'Email không được để trống',
+            'email.email' => 'Email không đúng định dạng',
         ]);
 
         $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return redirect()->back()->withErrors(['email' => 'Email không tồn tại'])->withInput();
+            return back()->with('error', 'Email không tồn tại')->withInput();
         }
 
-        // Generate random password
-        $new = Str::random(8);
-        $user->password = Hash::make($new);
-        $user->save();
+        $passrandom = Str::random(10);
+        $passencrypted = Hash::make($passrandom);
+        $user->update([
+            'password' => $passencrypted,
+        ]);
 
-        // Send email with new password
-        Mail::send('emails.reset-password', ['password' => $new], function ($m) use ($user) {
-            $m->to($user->email)->subject('Đặt lại mật khẩu');
+        $html = "<h2>Mật khẩu mới của bạn là: $passrandom</h2><p>Vui lòng đổi mật khẩu sau khi đăng nhập.</p>";
+
+        Mail::html($html, function ($message) use ($request) {
+            $message->to($request->email)
+                ->subject('Đặt lại mật khẩu');
         });
 
-        return redirect()->back()->with('message', 'Đã gửi mật khẩu mới. Vui lòng kiểm tra email của bạn');
+        return back()->with('message', 'Đã gửi mật khẩu mới. Bạn vui lòng kiểm tra email của bạn');
     }
 }

@@ -25,6 +25,6 @@ class ChangePasswordController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()->route('admin.home')->with('success', 'Đổi mật khẩu thành công');
+        return redirect()->route('admin.dashboard')->with('success', 'Đổi mật khẩu thành công');
     }
 }

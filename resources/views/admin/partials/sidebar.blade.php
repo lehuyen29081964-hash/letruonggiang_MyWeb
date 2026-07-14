@@ -2,7 +2,7 @@
     <h5 class="text-white mb-3">Menu</h5>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a href="{{ route('admin.home') }}" class="nav-link text-white">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}" class="nav-link text-white">Dashboard</a>
         </li>
         <li class="nav-item">
             <a href="{{ route('admin.categories.index') }}" class="nav-link text-white">Danh mục</a>
