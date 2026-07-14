@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 
@@ -55,6 +58,25 @@ class AuthController extends Controller
     // Xử lý quên mật khẩu
     public function postForgotPassword(Request $request)
     {
-        // Implement forgot password logic
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return redirect()->back()->withErrors(['email' => 'Email không tồn tại'])->withInput();
+        }
+
+        // Generate random password
+        $new = Str::random(8);
+        $user->password = Hash::make($new);
+        $user->save();
+
+        // Send email with new password
+        Mail::send('emails.reset-password', ['password' => $new], function ($m) use ($user) {
+            $m->to($user->email)->subject('Đặt lại mật khẩu');
+        });
+
+        return redirect()->back()->with('message', 'Đã gửi mật khẩu mới. Vui lòng kiểm tra email của bạn');
     }
 }

@@ -36,9 +36,12 @@ Route::prefix('admin')->name('admin.')->middleware(AuthMiddleware::class)->group
     Route::get('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'show'])->name('change-password');
     Route::post('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'update'])->name('change-password.post');
 
-    Route::resource('categories', CategoryController::class);
-    Route::resource('brands', BrandController::class);
-    Route::resource('products', ProductController::class);
+    // Admin-only resources (role = 1)
+    Route::middleware(App\Http\Middleware\RoleMiddleware::class . ':1')->group(function () {
+        Route::resource('categories', CategoryController::class);
+        Route::resource('brands', BrandController::class);
+        Route::resource('products', ProductController::class);
+    });
 });
 
 
