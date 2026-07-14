@@ -14,6 +14,7 @@ class CategoryController extends Controller
     public function index($limit = 10)
     {
         $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
+            ->whereNull('deleted_at')
             ->orderBy('catename')
             ->paginate($limit);
 
@@ -112,13 +113,46 @@ class CategoryController extends Controller
         $category = Category::find($id);
 
         if ($category) {
-            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
-                Storage::disk('public')->delete('categories/' . $category->image);
-            }
             $category->delete();
         }
 
         return Redirect::route('admin.categories.index')
             ->with('success', 'Xóa danh mục thành công.');
+    }
+
+    public function trash($limit = 10)
+    {
+        $list = Category::onlyTrashed()
+            ->orderBy('catename')
+            ->paginate($limit);
+
+        return view('admin.categories.trash', compact('list'));
+    }
+
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->find($id);
+
+        if ($category) {
+            $category->restore();
+        }
+
+        return Redirect::route('admin.categories.trash')
+            ->with('success', 'Khôi phục thành công.');
+    }
+
+    public function forceDelete($id)
+    {
+        $category = Category::onlyTrashed()->find($id);
+
+        if ($category) {
+            if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
+                Storage::disk('public')->delete('categories/' . $category->image);
+            }
+            $category->forceDelete();
+        }
+
+        return Redirect::route('admin.categories.trash')
+            ->with('success', 'Xóa vĩnh viễn thành công.');
     }
 }

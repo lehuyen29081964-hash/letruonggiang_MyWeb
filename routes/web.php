@@ -38,6 +38,9 @@ Route::prefix('admin')->name('admin.')->middleware(AuthMiddleware::class)->group
 
     // Admin-only resources (role = 1)
     Route::middleware(App\Http\Middleware\RoleMiddleware::class . ':1')->group(function () {
+        Route::get('/categories/trash', [App\Http\Controllers\Admin\CategoryController::class, 'trash'])->name('categories.trash');
+        Route::patch('/categories/{id}/restore', [App\Http\Controllers\Admin\CategoryController::class, 'restore'])->name('categories.restore');
+        Route::delete('/categories/{id}/forceDelete', [App\Http\Controllers\Admin\CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
         Route::resource('categories', CategoryController::class);
         Route::resource('brands', BrandController::class);
         Route::resource('products', ProductController::class);

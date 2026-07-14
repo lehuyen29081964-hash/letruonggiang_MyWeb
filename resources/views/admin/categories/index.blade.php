@@ -10,6 +10,7 @@
     </div>
     <div>
         <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">Thêm mới</a>
+        <a href="{{ route('admin.categories.trash') }}" class="btn btn-danger ms-2">Thùng rác</a>
     </div>
 </div>
 
