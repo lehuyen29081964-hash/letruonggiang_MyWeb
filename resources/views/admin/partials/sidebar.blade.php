@@ -1,17 +1,17 @@
-<div class="sidebar bg-dark p-3">
-    <h5 class="text-white mb-3">Menu</h5>
+<div class="sidebar sidebar-light p-3">
+    <h5 class="mb-3">Menu</h5>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a href="{{ route('admin.dashboard') }}" class="nav-link text-white">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('admin.categories.index') }}" class="nav-link text-white">Danh mục</a>
+            <a href="{{ route('admin.categories.index') }}" class="nav-link">Danh mục</a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('admin.brands.index') }}" class="nav-link text-white">Thương hiệu</a>
+            <a href="{{ route('admin.brands.index') }}" class="nav-link">Thương hiệu</a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('admin.products.index') }}" class="nav-link text-white">Sản phẩm</a>
+            <a href="{{ route('admin.products.index') }}" class="nav-link">Sản phẩm</a>
         </li>
     </ul>
 </div>

@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
@@ -15,7 +14,7 @@
     <div class="row min-vh-100">
 
         {{-- SIDEBAR --}}
-        <div class="col-md-2 bg-dark text-white p-0">
+        <div class="col-md-2 sidebar-light p-0">
             @include('admin._partials.sidebar')
         </div>
 
