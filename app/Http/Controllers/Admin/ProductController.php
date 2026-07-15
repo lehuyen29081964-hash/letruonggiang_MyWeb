@@ -173,4 +173,63 @@ class ProductController extends Controller
         return Redirect::route('admin.products.index')
             ->with('success', 'Xóa sản phẩm thành công.');
     }
+
+    public function trash($limit = 10)
+    {
+        $list = Product::onlyTrashed()->orderBy('productname')->paginate($limit);
+        $trashCount = Product::onlyTrashed()->count();
+
+        return view('admin.products.trash', compact('list', 'trashCount'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            Product::onlyTrashed()->findOrFail($id)->restore();
+            return Redirect::route('admin.products.trash')
+                ->with('success', 'Khôi phục sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Khôi phục thất bại.');
+        }
+    }
+
+    public function restoreAll()
+    {
+        try {
+            Product::onlyTrashed()->restore();
+            return Redirect::route('admin.products.trash')
+                ->with('success', 'Khôi phục tất cả sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Khôi phục tất cả thất bại.');
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            $product = Product::onlyTrashed()->findOrFail($id);
+
+            if ($product->image && file_exists(public_path($product->image))) {
+                @unlink(public_path($product->image));
+            }
+
+            $product->forceDelete();
+
+            return Redirect::route('admin.products.trash')
+                ->with('success', 'Xóa vĩnh viễn sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Xóa vĩnh viễn thất bại.');
+        }
+    }
+
+    public function forceDeleteAll()
+    {
+        try {
+            Product::onlyTrashed()->forceDelete();
+            return Redirect::route('admin.products.trash')
+                ->with('success', 'Xóa vĩnh viễn tất cả sản phẩm thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Xóa vĩnh viễn tất cả thất bại.');
+        }
+    }
 }

@@ -6,7 +6,10 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">DANH SÁCH THƯƠNG HIỆU</h3>
-            <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">Thêm thương hiệu</a>
+            <div>
+                <a href="{{ route('admin.brands.create') }}" class="btn btn-primary">Thêm thương hiệu</a>
+                <a href="{{ route('admin.brands.trash') }}" class="btn btn-danger ms-2">Thùng rác</a>
+            </div>
         </div>
 
         @if(session('success'))

@@ -10,6 +10,9 @@
             <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Thêm sản phẩm
             </a>
+            <a href="{{ route('admin.products.trash') }}" class="btn btn-danger ms-2">
+                <i class="bi bi-trash"></i> Thùng rác
+            </a>
         </div>
     </div>
 

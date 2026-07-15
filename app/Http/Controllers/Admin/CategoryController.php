@@ -131,28 +131,59 @@ class CategoryController extends Controller
 
     public function restore($id)
     {
-        $category = Category::onlyTrashed()->find($id);
+        try {
+            Category::onlyTrashed()->findOrFail($id)->restore();
 
-        if ($category) {
-            $category->restore();
+            return Redirect::route('admin.categories.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()
+                ->with('error', 'Khôi phục thất bại.');
         }
+    }
 
-        return Redirect::route('admin.categories.trash')
-            ->with('success', 'Khôi phục thành công.');
+    public function restoreAll()
+    {
+        try {
+            Category::onlyTrashed()->restore();
+
+            return Redirect::route('admin.categories.trash')
+                ->with('success', 'Khôi phục tất cả thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()
+                ->with('error', 'Khôi phục tất cả thất bại.');
+        }
     }
 
     public function forceDelete($id)
     {
-        $category = Category::onlyTrashed()->find($id);
+        try {
+            $category = Category::onlyTrashed()->findOrFail($id);
 
-        if ($category) {
             if ($category->image && Storage::disk('public')->exists('categories/' . $category->image)) {
                 Storage::disk('public')->delete('categories/' . $category->image);
             }
-            $category->forceDelete();
-        }
 
-        return Redirect::route('admin.categories.trash')
-            ->with('success', 'Xóa vĩnh viễn thành công.');
+            $category->forceDelete();
+
+            return Redirect::route('admin.categories.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()
+                ->with('error', 'Xóa thất bại.');
+        }
+    }
+
+    public function forceDeleteAll()
+    {
+        try {
+            Category::onlyTrashed()->forceDelete();
+
+            return Redirect::route('admin.categories.trash')
+                ->with('success', 'Xóa vĩnh viễn tất cả thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()
+                ->with('error', 'Xóa vĩnh viễn tất cả thất bại.');
+        }
     }
 }

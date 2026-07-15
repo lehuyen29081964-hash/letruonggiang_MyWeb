@@ -98,4 +98,63 @@ class BrandController extends Controller
         return Redirect::route('admin.brands.index')
             ->with('success', 'Xóa thương hiệu thành công.');
     }
+
+    public function trash($limit = 10)
+    {
+        $list = Brand::onlyTrashed()->orderBy('brandname')->paginate($limit);
+        $trashCount = Brand::onlyTrashed()->count();
+
+        return view('admin.brands.trash', compact('list', 'trashCount'));
+    }
+
+    public function restore($id)
+    {
+        try {
+            Brand::onlyTrashed()->findOrFail($id)->restore();
+            return Redirect::route('admin.brands.trash')
+                ->with('success', 'Khôi phục thương hiệu thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Khôi phục thất bại.');
+        }
+    }
+
+    public function restoreAll()
+    {
+        try {
+            Brand::onlyTrashed()->restore();
+            return Redirect::route('admin.brands.trash')
+                ->with('success', 'Khôi phục tất cả thương hiệu thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Khôi phục tất cả thất bại.');
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            $brand = Brand::withTrashed()->findOrFail($id);
+
+            if ($brand->image && file_exists(public_path($brand->image))) {
+                @unlink(public_path($brand->image));
+            }
+
+            $brand->forceDelete();
+
+            return Redirect::route('admin.brands.trash')
+                ->with('success', 'Xóa vĩnh viễn thương hiệu thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Xóa vĩnh viễn thất bại.');
+        }
+    }
+
+    public function forceDeleteAll()
+    {
+        try {
+            Brand::onlyTrashed()->forceDelete();
+            return Redirect::route('admin.brands.trash')
+                ->with('success', 'Xóa vĩnh viễn tất cả thương hiệu thành công.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', 'Xóa vĩnh viễn tất cả thất bại.');
+        }
+    }
 }
